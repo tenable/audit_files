@@ -1,0 +1,58 @@
+# This script is Copyright (C) 2004-2020 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This .audit addresses a temporary stop gap in targets where the patch is not installed or feasible to install in a timely manner.
+#
+# Sources for additional information:
+#   https://msrc.microsoft.com/update-guide/vulnerability/ADV200013
+#
+<check_type:"Windows" version:"2">
+<group_policy:"ADV200013">
+<if>
+  <condition type:"AND">
+    <custom_item>
+      type            : AUDIT_POWERSHELL
+      description     : "Check for the DNS service"
+      value_type      : POLICY_TEXT
+      value_data      : "Pass"
+      powershell_args : "$service=$(get-service | where {$_.Name -like 'dns'}); if($service) { $result='Pass' } else { $result='Fail'}; $result"
+    </custom_item>
+  </condition>
+  <then>
+   <custom_item>
+      type        : REGISTRY_SETTING
+      description : "ADV200013 - MaximumUdpPacketSize Registry Setting"
+      info        : "This check looks for the existence of a temporary workaround advised by Microsoft."
+      solution    : "From https://msrc.microsoft.com/update-guide/vulnerability/ADV200013:
+
+    Configure Windows DNS servers to have UDP buffer size of 1221
+
+Note Using Registry Editor incorrectly can cause serious problems that may require you to reinstall your operating system. Microsoft cannot guarantee that problems resulting from the incorrect use of Registry Editor can be solved. Use Registry Editor at your own risk. For information about how to edit the registry, view the 'Changing Keys And Values' Help topic in Registry Editor (Regedit.exe) or view the 'Add and Delete Information in the Registry' and 'Edit Registry Data' Help topics in Regedt32.exe.
+
+Run regedit.exe as Administrator.
+
+In Registry Editor, navigate to the HKLM\SYSTEM\CurrentControlSet\Services\DNS\Parameters subkey and set the following parameters:
+
+Value: MaximumUdpPacketSize
+Type: DWORD
+Data: 4C5 Hexadecimal or 1221 Decimal
+Close Registry Editor and restart the DNS service.
+
+Impact of workaround
+
+For responses larger than 4C5 or 1221, the DNS resolver would now switch to TCP."
+      value_type  : POLICY_DWORD
+      value_data  : 1221
+      reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\DNS\Parameters"
+      reg_item    : "MaximumUdpPacketSize"
+      reg_option  : CAN_NOT_BE_NULL
+    </custom_item>
+  </then>
+  <else>
+    <report type: "PASSED">
+      description : "ADV200013 - MaximumUdpPacketSize Registry Setting"
+      info        : "The Windows DNS service was not found. This check is not applicable."
+    </report>
+  </else>
+</if>
+</group_policy>
+</check_type>
