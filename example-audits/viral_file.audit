@@ -1,0 +1,112 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# description	:	Checks for presence of known file in known path.
+#
+# Note		:	This .audit is written around the Banload.FVQ trojan/downloader.
+#				Other values may be substituted for other types of malware or
+#				specific payloads.  It is specifically looking for two files which
+#				are created during an infection.
+#
+# Note		:	Information on Banload.FVQ take from:
+#				http://www.f-secure.com/v-descs/trojan-downloader_w32_banload_fvq.shtml
+#
+# Note		:	The "Path" directive in the "wmi_request" token must use double backslashes.
+
+<check_type:"Windows" version:"2">
+<group_policy:"viral_file">
+
+<if>
+  <condition type:"and">
+    <custom_item>
+      type          : WMI_POLICY
+      description   : "innit226.exe file search"
+      value_type    : POLICY_MULTI_TEXT
+      value_data    : "c:\windows\system32\innit226.exe"
+      wmi_namespace : "root/CIMV2"
+      wmi_request   : "Select Name From CIM_DataFile Where (Drive = 'c:') AND (Path = '\\windows\\system32\\') AND (FileName = 'innit226') AND (Extension = 'exe')"
+      wmi_attribute : "Name"
+      wmi_key       : "Name"
+      wmi_option    : WMI_ENUM
+      check_type    : CHECK_EQUAL_ANY
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"FAILED">
+      description : "Banload.FVQ trojan infection check (method 1)."
+      info        : "Presence of a file associated with the Banload.FVQ trojan/downloader was found.
+
+      File: c:\windows\system32\innit226.exe
+
+      (This audit tests for the Badload.FVQ virus, as defined at:
+
+      http://www.f-secure.com/v-descs/trojan-downloader_w32_banload_fvq.shtml
+
+      The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </then>
+
+  <else>
+    <report type:"PASSED">
+      description : "Banload.FVQ trojan infection check (method 1)."
+      info        : "A dropfile associated with the Banload.FVQ trojan/downloader was not found.
+
+      (This audit tests for the Badload.FVQ virus, as defined at:
+
+      http://www.f-secure.com/v-descs/trojan-downloader_w32_banload_fvq.shtml
+
+      The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </else>
+</if>
+
+<if>
+  <condition type:"and">
+    <custom_item>
+      type          : WMI_POLICY
+      description   : "msnmsgsr.exe file search"
+      value_type    : POLICY_MULTI_TEXT
+      value_data    : "c:\windows\system32\msnmsgsr.exe"
+      wmi_namespace : "root/CIMV2"
+      wmi_request   : "Select Name From CIM_DataFile Where (Drive = 'c:') AND (Path = '\\windows\\system32\\') AND (FileName = 'msnmsgsr') AND (Extension = 'exe')"
+      wmi_attribute : "Name"
+      wmi_key       : "Name"
+      wmi_option    : WMI_ENUM
+      check_type    : CHECK_EQUAL_ANY
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"FAILED">
+      description : "Banload.FVQ trojan infection check (method 2)."
+      info        : "Presence of a file associated with the Banload.FVQ trojan/downloader was found.
+
+      File: c:\windows\system32\msnmsgsr.exe
+
+      (This audit tests for the Badload.FVQ virus, as defined at:
+
+      http://www.f-secure.com/v-descs/trojan-downloader_w32_banload_fvq.shtml
+
+      The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </then>
+
+  <else>
+    <report type:"PASSED">
+      description : "Banload.FVQ trojan infection check (method 2)."
+      info        : "A dropfile associated with the Banload.FVQ trojan/downloader was not found.
+
+      (This audit tests for the Badload.FVQ virus, as defined at:
+
+      http://www.f-secure.com/v-descs/trojan-downloader_w32_banload_fvq.shtml
+
+      The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </else>
+</if>
+
+</group_policy>
+</check_type>

@@ -1,0 +1,57 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# Description : This audit checks various Windows settings
+
+<check_type:"Windows" version:"2">
+<group_policy:"User audit guideline">
+
+<item>
+  name  : "Enforce password history"
+  value : 24
+</item>
+
+<item>
+  name  : "Maximum password age"
+  value : 90
+</item>
+
+<item>
+  name  : "Minimum password age"
+  value : 1
+</item>
+
+<item>
+  name  : "Minimum password length"
+  value : [12..14]
+</item>
+
+<item>
+  name  : "Account lockout duration"
+  value : [15..30]
+</item>
+
+<item>
+  name  : "Account lockout threshold"
+  value : [3..5]
+</item>
+
+<item>
+  name  : "Reset lockout account counter after"
+  value : [15..30]
+</item>
+
+<item>
+  name  : "Audit account logon events"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit logon events"
+  value : "Success, Failure"
+</item>
+
+</group_policy>
+</check_type>

@@ -1,0 +1,58 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# description	: Checks for processes often started by some viruses.
+#
+# Note		: This .audit is written around the W32/Hupigon.OGA backdoor.
+#			  W32/Hupigon.OGA creates a processes, sodata.exe, which is what this audit
+#			  checks for the presence of.
+#
+#			  Information on W32/Hupigon.OGA taken from:
+#			  http://www.f-secure.com/v-descs/backdoor_w32_hupigon_oga.shtml
+#
+#			  To test for the process of a different virus you will need to edit the
+#			  value "value_data", and edit the "description" and "info" lines to reflect
+#			  proper response text.
+
+<check_type:"Windows" version:"2">
+<group_policy:"viral">
+
+#
+## Checks for running process cmd.exe
+#
+
+<if>
+  <condition type:"and">
+    <custom_item>
+      type          : WMI_POLICY
+      description   : "Virus running"
+      value_type    : POLICY_MULTI_TEXT
+      value_data    : "sodata.exe"
+      wmi_namespace : "root/CIMV2"
+      wmi_request   : "SELECT Name FROM Win32_Process"
+      wmi_attribute : "Name"
+      wmi_key       : "Name"
+      wmi_option    : WMI_ENUM
+      check_type    : CHECK_EQUAL_ANY
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"FAILED">
+      description : "Hupigon virus test."
+      info        : "sodata.exe was found running.  This process is commonly spawned by the W32/Hupigon.OGA backdoor."
+    </report>
+  </then>
+
+  <else>
+    <report type:"PASSED">
+      description : "Hupigon virus test."
+      info        : "The absence of sodata.exe in the process table indicates the W32/Hupigon.OGA backdoor is likely not actively infecting this machine."
+    </report>
+  </else>
+</if>
+
+</group_policy>
+</check_type>
