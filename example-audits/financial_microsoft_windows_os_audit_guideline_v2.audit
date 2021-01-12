@@ -1,0 +1,433 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# Description : This audit checks various Windows settings
+
+<check_type:"Windows" version:"2">
+<group_policy:"Typical financial institution policy">
+
+<registry_acl:"Admin">
+  <user:"Administrators">
+    acl_inheritance : "inherited"
+    acl_apply       : "This key and subkeys"
+    acl_allow       : "Full Control"
+  </user>
+
+  <user:"CREATOR OWNER">
+    acl_inheritance : "inherited"
+    acl_apply       : "Subkeys only"
+    acl_allow       : "Full Control"
+  </user>
+
+  <user:"SYSTEM">
+    acl_inheritance : "inherited"
+    acl_apply       : "This key and subkeys"
+    acl_allow       : "Full Control"
+  </user>
+</registry_acl>
+
+<registry_acl:"Everyone">
+  <user:"Administrators">
+    acl_inheritance : "inherited"
+    acl_apply       : "This key and subkeys"
+    acl_allow       : "full control"
+  </user>
+
+  <user:"CREATOR OWNER">
+    acl_inheritance : "inherited"
+    acl_apply       : "Subkeys only"
+    acl_allow       : "full control"
+  </user>
+
+  <user:"SYSTEM">
+    acl_inheritance : "inherited"
+    acl_apply       : "This key and subkeys"
+    acl_allow       : "full control"
+  </user>
+
+  <user:"Users">
+    acl_inheritance : "inherited"
+    acl_apply       : "This key and subkeys"
+    acl_allow       : "full control"
+  </user>
+</registry_acl>
+
+<custom_item>
+  type        : REGISTRY_PERMISSIONS
+  description : "Registry permissions for Run key"
+  value_type  : REG_ACL
+  value_data  : "Everyone"
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_PERMISSIONS
+  description : "Registry permissions for RunOnce key"
+  value_type  : REG_ACL
+  value_data  : "Everyone"
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_PERMISSIONS
+  description : "Registry permissions for RunOnceEx key"
+  value_type  : REG_ACL
+  value_data  : "Everyone"
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_PERMISSIONS
+  description : "Registry permissions for Uninstall key"
+  value_type  : REG_ACL
+  value_data  : "Everyone"
+  reg_key     : "HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall"
+</custom_item>
+
+<item>
+  name  : "Enforce password history"
+  value : 24
+</item>
+
+<item>
+  name  : "Maximum password age"
+  value : 90
+</item>
+
+<item>
+  name  : "Minimum password age"
+  value : 1
+</item>
+
+<item>
+  name  : "Minimum password length"
+  value : [12..14]
+</item>
+
+<item>
+  name  : "Account lockout duration"
+  value : [15..30]
+</item>
+
+<item>
+  name  : "Account lockout threshold"
+  value : [3..5]
+</item>
+
+<item>
+  name  : "Reset lockout account counter after"
+  value : [15..30]
+</item>
+
+<item>
+  name  : "Audit account logon events"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit account management"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit logon events"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit object access"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit process tracking"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Audit privilege use"
+  value : "Success, Failure"
+</item>
+
+<item>
+  name  : "Devices: Prevent users from installing printer drivers"
+  value : "Enabled"
+</item>
+
+<item>
+  name  : "Audit: Audit the use of Backup and Restore privilege"
+  value : "Enabled"
+</item>
+
+<item>
+  name  : "Interactive logon: Do not display last user name"
+  value : "enabled"
+</item>
+
+<item>
+  name  : "Maximum security log size"
+  value : [64..4194240]
+</item>
+
+<item>
+  name  : "Retain security log"
+  value : [14..365]
+</item>
+
+<item>
+  name  : "Audit: Shut down system immediately if unable to log security audits"
+  value : "Enabled"
+</item>
+
+# Custom items
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether administrative shares for Workstation are disabled."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
+  reg_item    : "AutoShareWks"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether administrative shares for Server are disabled."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
+  reg_item    : "AutoShareServer"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine the auto logon setting."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "AutoAdminLogon"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if recent logons are cached."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Subsystems"
+  reg_item    : "cachedlogonscount"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if CD autorun is enabled."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\System\CurrentControlSet\Services\CDRom"
+  reg_item    : "AutoRun"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if remote users can access the CDROM drive."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "allocatecdroms"
+  reg_type    : REG_SZ_DECIMAL
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if the page file will be cleared at shutdown."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management"
+  reg_item    : "ClearPageFileAtShutdown"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if DCOM is enabled."
+  value_type  : POLICY_TEXT
+  value_data  : "Y"
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Ole"
+  reg_item    : "EnableDCOM"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if remote users can access the Floppy drive."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "allocatefloppies"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether guests can access the application log."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Application"
+  reg_item    : "RestrictGuestAccess"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether guests can access the security log."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Security"
+  reg_item    : "RestrictGuestAccess"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether guests can access the system log."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\EventLog\System"
+  reg_item    : "RestrictGuestAccess"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if LanManager authentication is enabled"
+  value_type  : POLICY_DWORD
+  value_data  : 5
+  reg_key     : "HKLM\System\CurrentControlSet\control\LSA"
+  reg_item    : "LMCompatibilityLevel"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if  notice displays before logon."
+  value_type  : POLICY_TEXT
+  value_data  : "Notice: "
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "NoticeCaption"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if RAS connections are shut down at logoff."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "KeepRasConnections"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if the registry file system is secured (NTFS)"
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\System\CurrentControlSet\control\LSA"
+  reg_item    : "ForceGuest"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if syskey is installed on the computer."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\System\CurrentControlSet\Control\Lsa"
+  reg_item    : "SecureBoot"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if POSIX is supported"
+  value_type  : POLICY_TEXT
+  value_data  : "Posix"
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Subsystems"
+  reg_item    : "Optional"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if OS/2 is supported"
+  value_type  : POLICY_TEXT
+  value_data  : "Posix"
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Subsystems"
+  reg_item    : "Optional"
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if SMB signing is required on the server."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\System\CurrentControlSet\Services\lanmanserver\parameters"
+  reg_item    : "requiresecuritysignature"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if SMB signing is enabled on the server."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\System\CurrentControlSet\Services\lanmanserver\parameters"
+  reg_item    : "enablesecuritysignature"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if SMB signing is required on the client."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\System\CurrentControlSet\Services\lanmanworkstation\parameters"
+  reg_item    : "requiresecuritysignature"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if SMB signing is enabled on the client."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\System\CurrentControlSet\Services\lanmanworkstation\parameters"
+  reg_item    : "enablesecuritysignature"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine if system shutdown without logging on is allowed."
+  value_type  : POLICY_DWORD
+  value_data  : 0
+  reg_key     : "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+  reg_item    : "ShutDownWithoutLogon"
+  reg_type    : REG_DWORD
+</custom_item>
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "Determine whether remote access auditing is enabled."
+  value_type  : POLICY_DWORD
+  value_data  : 1
+  reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\RemoteAccess\Parameters"
+  reg_item    : "EnableAudit"
+  reg_type    : REG_DWORD
+</custom_item>
+
+</group_policy>
+</check_type>

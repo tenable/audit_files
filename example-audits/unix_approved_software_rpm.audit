@@ -1,0 +1,60 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# Description: This audit checks RPM based systems for installed software packages
+
+<check_type:"Unix">
+
+<if>
+  <condition type:"or">
+    <custom_item>
+      type        : CMD_EXEC
+      description : "Software Package Check <if>"
+      cmd         : "rpm --version"
+      expect      : "RPM version.*"
+    </custom_item>
+  </condition>
+
+  <then>
+    <custom_item>
+      type        : RPM_CHECK
+      description : "Software Package Check (kernel-2.6.0-0)"
+      info        : "Make sure that the Linux kernel is greater than or equal to version 2.6.0"
+      rpm         : "kernel-2.6.0-0"
+      operator    : "gte"
+      required    : YES
+    </custom_item>
+
+    <custom_item>
+      type        : RPM_CHECK
+      description : "Software Package Check (sharutils-4.6.1-2)"
+      info        : "Make sure that the Sharutils is greater than or equal to version 4.6.1-2"
+      rpm         : "sharutils-4.6.1-2"
+      operator    : "gte"
+      required    : YES
+    </custom_item>
+
+## Optional Check - list ALL installed software packages on the remote host. The output may be quite lengthy
+## Uncomment the lines below if you wish to display all software packages and versions on the remote host
+#    <custom_item>
+#   	type		: CMD_EXEC
+#   	description	: "Software Package Check"
+#   	info		: "Get a list of all installed software packages and versions"
+#   	cmd		: "rpm -qa"
+#    </custom_item>
+  </then>
+
+  <else>
+    <custom_item>
+      type        : CMD_EXEC
+      description : "Software Package Check (test)"
+      info        : "It appears that this operating system does not support RPM package management"
+      cmd         : "rpm --version"
+      expect      : "RPM version.*"
+    </custom_item>
+  </else>
+</if>
+
+</check_type>

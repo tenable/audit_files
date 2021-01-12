@@ -1,0 +1,34 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# Description: This audit checks the remote host using WMI to check for installation of approved software.
+# See also: https://plugins-customers.nessus.org/support-center/nessus_compliance_checks.pdf
+
+<check_type:"Windows" version:"2">
+<group_policy:"Tenable Windows Approved Software audit">
+
+<custom_item>
+  type          : WMI_POLICY
+  description   : "Check for Approved Software"
+  info          : "This benchmark check will poll the remote host to determine if it is running software beyond the base set
+
+  Run this audit against a compliant system to determine software seen by WMI. This test will fail if additional WMI detected software is seen by the scan.
+
+  The easiest way to format your software list is to place dummy data in the 'value_data' field and run against your snapshot compliant system. The compliant software list will be returned in the failed audit output and can be pasted where the dummy data was entered previously.
+
+  Note: WMI checks, as used by this audit, do not indicate all software installed on a Windows system and should be used in conjunction with Nessus software plugins for more complete software detection.
+
+  Note: On Windows 2003, the 'WMI Windows Installer Provider', which is an add-on Windows Component under 'Maintenance and Management Tools' will need to be enabled for this check to work."
+  value_type    : POLICY_MULTI_TEXT
+  value_data    : "VMware Tools" && "Microsoft .NET Framework 3.0 Service Pack 1" && "Microsoft .NET Framework 2.0 Service Pack 1" && "Microsoft SQL Server 2005" && "Microsoft SQL Server VSS Writer" && "Microsoft SQL Server 2005 Books Online (English)" && "Microsoft SQL Server 2005 Notification Services" && "MSXML 6.0 Parser (KB933579)" && "Windows Presentation Foundation" && "WMI Tools" && "Opera 9.61" && "Adobe Reader 8.1.2" && "Microsoft Visual Studio 2005 Premier Partner Edition - ENU" && "Microsoft SQL Server 2005 Tools" && "Microsoft SQL Server 2005 Reporting Services" && "Microsoft Virtual PC 2007 SP1" && "Microsoft Office 2003 Web Components" && "Microsoft SQL Server 2005 Integration Services" && "SQLXML4" && "Microsoft SQL Server 2005 Backward compatibility" && "Microsoft Silverlight" && "Microsoft SQL Server 2005 Analysis Services" && "LM Tools" && "Microsoft SQL Server Setup Support Files (English)" && "Microsoft SQL Server Native Client"
+  wmi_namespace : "root/CIMV2"
+  wmi_request   : 'select Name from Win32_Product where InstallState = "5"'
+  wmi_attribute : "Name"
+  wmi_key       : "Name"
+  wmi_option    : WMI_ENUM
+</custom_item>
+
+</group_policy>
+</check_type>

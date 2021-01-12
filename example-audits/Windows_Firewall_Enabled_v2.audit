@@ -1,0 +1,48 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# Description: This audit checks if Windows Firewall is active
+
+<check_type:"Windows" version:"2">
+<group_policy:"Determine if Windows Firewall is in use.">
+
+<if>
+  <condition type:"or">
+    <custom_item>
+      type        : REGISTRY_SETTING
+      description : "Determine if Windows Firewall is active per Domain Policy."
+      value_type  : POLICY_SET
+      value_data  : "Enabled"
+      reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"
+      reg_item    : "EnableFirewall"
+      reg_type    : REG_DWORD
+    </custom_item>
+
+    <custom_item>
+      type        : REGISTRY_SETTING
+      description : "Determine if Windows Firewall is active per Local Policy."
+      value_type  : POLICY_SET
+      value_data  : "Enabled"
+      reg_key     : "HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"
+      reg_item    : "EnableFirewall"
+      reg_type    : REG_DWORD
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"PASSED">
+      description : "Windows Firewall is enabled"
+    </report>
+  </then>
+
+  <else>
+    <report type:"FAILED">
+      description : "Windows Firewall is enabled"
+    </report>
+  </else>
+</if>
+
+</group_policy>
+</check_type>

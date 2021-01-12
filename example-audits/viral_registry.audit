@@ -1,0 +1,97 @@
+#
+# This script is Copyright (C) 2004-2021 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This audit serves as an example that could assist in custom audit creation.
+#
+# description	:	Checks for registry keys or values.
+#
+# Note		:	This .audit is written around two different viruses, using two different methods for
+#				detecting traces of them.
+#
+#				The first is the Banbra.RM trojan/spy.  For this virus a registry audit is used
+#				to look for a key which the virus creates when it infects a machine.
+#
+#				The second example is the FakeAlert.BG trojan/downloader.  In this case the virus
+#				creates a registry key in a portion of the registry which is nested under a user's
+#				section of the registry, using identifies which are not predictable.  In that case
+#				we can allow Nessus to search recursively through HKEY_USERS to find any sign of
+#				the virus' key.
+#
+#				Information on Banbra.RM taken from:
+#				http://www.f-secure.com/v-descs/trojan-spy_w32_banbra_rm.shtml
+# 				Information on FakeAlert.BG taken from:
+#				http://www.f-secure.com/v-descs/trojan-downloader_w32_fakealert_bg.shtml
+#
+# Note		:	HKU checking automatically will recurse through that portion of the registry.
+
+<check_type:"Windows" version:"2">
+<group_policy:"viral_registry">
+
+<if>
+  <condition type:"and">
+    <custom_item>
+      type        : REGISTRY_SETTING
+      description : "Banbra.RM trojan check"
+      value_type  : POLICY_TEXT
+      value_data  : "C:\WINDOWS\msnmsgsr.exe"
+      reg_key     : "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\run"
+      reg_item    : "msn"
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"FAILED">
+      description : "Banbra.RM trojan check."
+      info        : "A key found in the registry indicates the Banbra.RM trojan is infecting the host.
+
+      Key: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\run , msn, C:\WINDOWS\msnmsgsr.exe
+
+      (This audit tests for the Banbra.RM trojan, as defined at:
+
+      http://www.f-secure.com/v-descs/trojan-spy_w32_banbra_rm.shtml
+
+      The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </then>
+
+  <else>
+    <report type:"PASSED">
+      description : "Banbra.RM trojan check."
+      info        : "The absence of a known key in the registry indicates the Banbra.RM trojan is likely not infecting this machine.
+
+      (This audit tests for the Banbra.RM trojan, as defined at:
+
+        http://www.f-secure.com/v-descs/trojan-spy_w32_banbra_rm.shtml
+
+        The contents of this audit should be edited to reflect any other desired target.)"
+    </report>
+  </else>
+</if>
+
+#
+## Checks HKU recursively
+#
+## In this case, located entry under : HKU\S-1-5-21-1654879353-151523537-1555705032-1003\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+## Note that the full path under HKU was not specified in the audit below to get this return.
+#
+
+<custom_item>
+  type        : REGISTRY_SETTING
+  description : "FakeAlert.BG trojan check"
+  info        : "A registry entry associated with the FakeAlert.BG trojan/downloader was found.
+
+  (This audit tests for the FakeAlert.BG virus, as defined at
+
+  http://www.f-secure.com/v-descs/trojan-downloader_w32_fakealert_bg.shtml
+
+  The contents of this audit should be edited to reflect any other desired target.)"
+  value_type  : POLICY_TEXT
+  value_data  : "C:\WINDOWS\System32\brastk.exe"
+  reg_key     : "HKU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+  reg_item    : "brastk"
+  reg_option  : CAN_BE_NULL
+  check_type  : CHECK_NOT_EQUAL
+</custom_item>
+
+</group_policy>
+</check_type>
