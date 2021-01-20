@@ -1,5 +1,6 @@
 # CVE-2020-25681, CVE-2020-25682, CVE-2020-25683, CVE-2020-25684, CVE-2020-25685, CVE-2020-25686, CVE-2020-25687
 
+## [Tenable Blog: DNSpooq: Seven Vulnerabilities Identified in dnsmasq](https://www.tenable.com/blog/dnspooq-seven-vulnerabilities-identified-in-dnsmasq)
 ## [Tenable: dnsmasq < 2.81 Denial of Service vulnerability](https://www.tenable.com/plugins/nessus/136411)
 ## [Tenable: DNSpooq Knowledge Base Article](https://community.tenable.com/s/article/Plugins-associated-with-the-DNSpooq-vulnerability)
 ## [DNSpooq Blog](https://www.jsof-tech.com/disclosures/dnspooq/)
