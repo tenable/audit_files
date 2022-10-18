@@ -1,5 +1,5 @@
 # Active Directory Certificate Services SAN Misconfiguration
-Microsoft Active Directory supports the use of certificates to authenticate to ressources (through an extension of Kerberos called PKINIT).
+Microsoft Active Directory supports the use of certificates to authenticate to resources (through an extension of Kerberos called PKINIT).
 
 ADCS servers are the PKI servers in a Windows environment and with those servers, it is possible to issue authentication certificates (using the correct Extended Key Usage).
 
