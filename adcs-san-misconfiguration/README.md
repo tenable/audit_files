@@ -35,8 +35,8 @@ If this is true, then execute ESC6 and ESC7 checks based on [SpecterOps.io](http
     <custom_item>
       type            : AUDIT_POWERSHELL
       description     : "ESC6 - Check for EDITF_ATTRIBUTESUBJECTALTNAME2 flag"
-	  info            : "Check for the EDITF_ATTRIBUTESUBJECTALTNAME2 flag on the CA."
-	  solution        : "Run 'certutil -setreg policy\EditFlags -EDITF_ATTRIBUTESUBJECTALTNAME2' to remove the flag."
+      info            : "Check for the EDITF_ATTRIBUTESUBJECTALTNAME2 flag on the CA."
+      solution        : "Run 'certutil -setreg policy\EditFlags -EDITF_ATTRIBUTESUBJECTALTNAME2' to remove the flag."
       value_type      : POLICY_TEXT
       value_data      : "Pass - EDITF_ATTRIBUTESUBJECTALTNAME2 is not set"
       powershell_args : '$output = \\"\\"; $caName = Get-ItemPropertyValue -Path HKLM:SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration -name Active; $editFlags = Get-ItemPropertyValue -Path \\"HKLM:SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\$caName\\PolicyModules\\CertificateAuthority_MicrosoftDefault.Policy\\" -name EditFlags; if ($editFlags -band 0x40000) { $output = \'Fail - EDITF_ATTRIBUTESUBJECTALTNAME2 flag is set\' } else { $output = \'Pass - EDITF_ATTRIBUTESUBJECTALTNAME2 is not set\' }; $output;'
@@ -48,8 +48,8 @@ Check for CA owner
     <custom_item>
       type            : AUDIT_POWERSHELL
       description     : "ESC7 - Check that CA owner is Administrator"
-	  info            : "Verify that the CA owner is Administrator."
-	  solution        : "Review the returned SID to verify if this check complies with local policy."
+      info            : "Verify that the CA owner is Administrator."
+      solution        : "Review the returned SID to verify if this check complies with local policy."
       value_type      : POLICY_TEXT
       value_data      : "Pass - Owner SID is Administrator: S-1-5-32-544"
       powershell_args : '$output = \\"\\"; $caName = Get-ItemPropertyValue -Path HKLM:SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\ -name Active; $regData = Get-ItemPropertyValue -Path \\"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\$caName\\" -name Security; $caSecurityDescriptor = New-Object Security.AccessControl.RawSecurityDescriptor($($regData), 0); $caOwner = $caSecurityDescriptor.Owner; if ($caOwner.Value -eq \'S-1-5-32-544\'){ $output = \\"Pass - Owner SID is Administrator: $caOwner\\" } else { $output = \\"Review Required - Owner SID is not Administrator: $caOwner\\" }; $output'
@@ -61,12 +61,12 @@ Check for 'Manage CA' permission
     <custom_item>
       type            : AUDIT_POWERSHELL
       description     : "ESC7 - Check that CA Permissions do not include 'Manage CA'"
-	  info            : "Verify that the 'Manage CA' permission is correct for all listed SIDs"
-	  solution        : "Review the returned SID(s) to verify if this check complies with local policy."
+      info            : "Verify that the 'Manage CA' permission is correct for all listed SIDs"
+      solution        : "Review the returned SID(s) to verify if this check complies with local policy."
       value_type      : POLICY_TEXT
       value_data      : "Pass - All SIDs correct"
-      powershell_args : '$output = \\"\\"; $caName = Get-ItemPropertyValue -Path HKLM:SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration -name Active; $regData = Get-ItemPropertyValue -Path \\"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\$caName\\" -name Security; $caSecurityDescriptor = New-Object Security.AccessControl.RawSecurityDescriptor($($regData), 0); ForEach ($value in $caSecurityDescriptor.DiscretionaryAcl){ $sid = $value.SecurityIdentifier.value; $accessMask = $value.AccessMask; if( ($sid -eq \\"S-1-5-32-544\\") -or ($sid -like \\"S-1-5-21-*-512\\") -or ($sid -like \\"S-1-5-21-*-519\\") ) { continue } else { if($accessMask % 2 -eq 1){ $output += \\"Review Required - SID $sid has Manage CA permission`n\\" } } }; if(!$output){ $output = \'Pass - All SIDs correct\'; }; $output;'
-	  severity        : MEDIUM
+      powershell_args : '$output = \\"\\"; $caName = Get-ItemPropertyValue -Path HKLM:SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration -name Active; $regData = Get-ItemPropertyValue -Path \\"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\$caName\\" -name Security; $caSecurityDescriptor = New-Object Security.AccessControl.RawSecurityDescriptor($($regData), 0); ForEach ($value in $caSecurityDescriptor.DiscretionaryAcl){ $sid = $value.SecurityIdentifier.value; $accessMask = $value.AccessMask; $aceType = $value.AceType; if( ($sid -eq \\"S-1-5-32-544\\") -or ($sid -like \\"S-1-5-21-*-512\\") -or ($sid -like \\"S-1-5-21-*-519\\") ) { continue } else { if(($aceType -eq \'AccessAllowed\') -and ($accessMask % 2 -eq 1)){ $output += \\"Review Required - SID $sid is not trusted for the ManageCA right on the CA`n\\" } } }; if(!$output){ $output = \'Pass - All SIDs correct\'; }; $output;'
+      severity        : MEDIUM
     </custom_item>
 ```
 
